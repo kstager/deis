@@ -56,9 +56,7 @@ define echo_yellow
 	@echo "\033[0;33m$(subst ",,$(1))\033[0m"
 endef
 
-# TODO: re-evaluate the start order now that we're on fleet 0.3.2.
-# due to scheduling problems with fleet 0.2.0, start order of components
-# is fragile. hopefully this can be changed soon...
+# TODO: re-evaluate the fragile start order now that we're on fleet 0.3.2.
 COMPONENTS=builder cache controller database logger registry
 ALL_COMPONENTS=$(COMPONENTS) router
 START_COMPONENTS=registry logger cache database
@@ -69,7 +67,7 @@ ROUTER_UNITS = $(shell seq -f "deis-router.%g.service" -s " " $(DEIS_FIRST_ROUTE
 
 all: build run
 
-build:
+build: FORCE
 	$(call ssh_all,'cd share && for c in $(ALL_COMPONENTS); do cd $$c && docker build -t deis/$$c . && cd ..; done')
 
 check-fleet:
@@ -168,3 +166,5 @@ tests:
 uninstall: check-fleet stop
 	$(FLEETCTL) unload $(call deis_units,launched,.)
 	$(FLEETCTL) destroy $(strip $(call deis_units,.,.))
+
+FORCE:
