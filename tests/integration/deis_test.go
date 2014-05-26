@@ -250,9 +250,8 @@ func TestRemoveKey(t *testing.T) {
     )
     output, _ := cmd.CombinedOutput()
 
-    if !strings.Contains(string(output), "done") &&
-       !strings.Contains(string(output), "already exists") {
-       t.Fatalf("Received unexpected output for `deis keys:add`: '%s'", output)
+    if !strings.Contains(string(output), "done") {
+       t.Fatalf("Received unexpected output for `deis keys:remove`: '%s'", output)
     }
 }
 
